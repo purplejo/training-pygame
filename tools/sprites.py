@@ -1,8 +1,11 @@
 # coding: utf-8
 
+from typing import Optional, Tuple, Union
+
 import pygame
 
 from tools import decorators
+from tools.softwares import Screen
 
 
 class Sprite(object):
@@ -16,7 +19,7 @@ class Sprite(object):
         self._area = None
         self.reset_area()
 
-    def __getstate__(self):
+    def __getstate__(self) -> dict:
         """Use to pickle the sprite."""
         dict_ = self.__dict__.copy()
         dict_.pop('_image')
@@ -37,22 +40,22 @@ class Sprite(object):
         """Reset the sprite area from unpickler."""
         self._area = self._image.get_rect(topleft=self._pos)
 
-    def blit_on(self, surface: pygame.Surface):
+    def blit_on(self, surface: Union[Screen, pygame.Surface]):
         """Display the sprite on a surface."""
         surface.blit(self._image, self._area)
 
     @property
-    def image(self):
+    def image(self) -> pygame.Surface:
         """Return the current sprite image."""
         return self._image
 
     @property
-    def area(self):
+    def area(self) -> pygame.Rect:
         """Return the current sprite area."""
         return self._area
 
     @property
-    def x(self):
+    def x(self) -> int:
         """Return the current sprite topleft x position."""
         return self._pos[0]
 
@@ -64,7 +67,7 @@ class Sprite(object):
         self._area.x = value
 
     @property
-    def y(self):
+    def y(self) -> int:
         """Return the current sprite topleft y position."""
         return self._pos[1]
 
@@ -76,7 +79,7 @@ class Sprite(object):
         self._area.y = value
 
     @property
-    def pos(self):
+    def pos(self) -> (int, int):
         """Return the current sprite topleft position."""
         return self._pos
 
@@ -87,17 +90,17 @@ class Sprite(object):
         self._area.topleft = value
 
     @property
-    def width(self):
+    def width(self) -> int:
         """Return the current sprite width."""
         return self._area.width
 
     @property
-    def height(self):
+    def height(self) -> int:
         """Return the current sprite height."""
         return self._area.height
 
     @property
-    def size(self):
+    def size(self) -> (int, int):
         """Return the current sprite size."""
         return self._area.size
 
@@ -117,7 +120,7 @@ class Surface(Sprite):
         self._image.fill(self._color)
 
     @property
-    def width(self):
+    def width(self) -> int:
         """Return the current surface width."""
         return super(Surface, self).width
 
@@ -130,7 +133,7 @@ class Surface(Sprite):
         self._area.width = value
 
     @property
-    def height(self):
+    def height(self) -> int:
         """Return the current surface height."""
         return super(Surface, self).height
 
@@ -143,7 +146,7 @@ class Surface(Sprite):
         self._area.height = value
 
     @property
-    def size(self):
+    def size(self) -> (int, int):
         """Return the current surface size."""
         return super(Surface, self).size
 
@@ -155,7 +158,7 @@ class Surface(Sprite):
         self._area.size = value
 
     @property
-    def color(self):
+    def color(self) -> (int, int, int):
         """Return the current surface color."""
         return self._color
 
@@ -175,10 +178,10 @@ class Font(pygame.font.Font):
 class Text(Sprite):
     """Manage texts."""
 
-    def __init__(self, pos: (int, int) = (0, 0), font_filename: None | str = None, font_size: int = 84,
+    def __init__(self, pos: (int, int) = (0, 0), font_filename: Optional[str] = None, font_size: int = 84,
                  antialias: bool = True,
                  message: str = "PYGAME", message_color: (int, int, int) = (0, 0, 0),
-                 background_color: None | (int, int, int) = None):
+                 background_color: Optional[Tuple[int, int, int]] = None):
         """Create the text for the first time."""
         self._font_filename = font_filename
         self._font_size = font_size
@@ -190,7 +193,7 @@ class Text(Sprite):
         self._background_color = background_color
         super(Text, self).__init__(pos=pos)
 
-    def __getstate__(self):
+    def __getstate__(self) -> dict:
         """Use to pickle the sprite."""
         dict_ = super(Text, self).__getstate__()
         dict_.pop('_font')
@@ -211,12 +214,12 @@ class Text(Sprite):
         self._image = self._font.render(self._message, self._antialias, self._message_color, self._background_color)
 
     @property
-    def font_filename(self):
+    def font_filename(self) -> str:
         """Return the current text font."""
         return self._font_filename
 
     @font_filename.setter
-    def font_filename(self, value: None | str):
+    def font_filename(self, value: Optional[str]):
         """Modify the text font."""
         self._font_filename = value
         self.reset_font()
@@ -224,7 +227,7 @@ class Text(Sprite):
         self.reset_area()
 
     @property
-    def font_size(self):
+    def font_size(self) -> int:
         """Return the current text font size"""
         return self._font_size
 
@@ -237,7 +240,7 @@ class Text(Sprite):
         self.reset_area()
 
     @property
-    def message(self):
+    def message(self) -> str:
         """Return the current text message."""
         return self._message
 
@@ -249,7 +252,7 @@ class Text(Sprite):
         self.reset_area()
 
     @property
-    def antialias(self):
+    def antialias(self) -> bool:
         """Return the current text antialias."""
         return self._antialias
 
@@ -260,7 +263,7 @@ class Text(Sprite):
         self.reset_image()
 
     @property
-    def message_color(self):
+    def message_color(self) -> (int, int, int):
         """Return the current text color."""
         return self._message_color
 
@@ -271,12 +274,12 @@ class Text(Sprite):
         self.reset_image()
 
     @property
-    def background_color(self):
+    def background_color(self) -> Optional[Tuple[int, int, int]]:
         """Return the current text background color."""
         return self._background_color
 
     @background_color.setter
-    def background_color(self, value: None | (int, int, int)):
+    def background_color(self, value: Optional[Tuple[int, int, int]]):
         """Modify the text background color."""
         self._background_color = value
         self.reset_image()

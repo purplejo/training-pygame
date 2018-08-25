@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import time
-from typing import List, Union
+from typing import List, Optional, Tuple, Union
 
 import pygame
 import pygame.locals as pg
@@ -14,7 +14,7 @@ class Screen(object):
     """Simulate a screen software."""
 
     def __init__(self, size: (int, int) = (800, 600), color: (int, int, int) = (255, 255, 255),
-                 title: str = "Pygame Window", flags: List[str] = None):
+                 title: str = "Pygame Window", flags: Optional[List[str]] = None):
         """Create the screen for the first time."""
         info = pygame.display.Info()
         self._fullscreen_size = (info.current_w, info.current_h)
@@ -62,13 +62,13 @@ class Screen(object):
                 if event.size != self.size:
                     self.size = event.size
 
-    def blit(self, source: pygame.Surface, destination: Union[(int, int), pygame.Rect],
-             area: bool = None, special_flags: int = 0):
+    def blit(self, source: pygame.Surface, destination: Union[Tuple[int, int], pygame.Rect],
+             area: bool = None, special_flags: int = 0) -> pygame.Rect:
         """Display an image onto the screen."""
         return self.image.blit(source, destination, area, special_flags)
 
     @property
-    def width(self):
+    def width(self) -> int:
         """Return the current screen width."""
         if self._fullscreen:
             return self._fullscreen_size[0]
@@ -82,7 +82,7 @@ class Screen(object):
         self.reset_screen()
 
     @property
-    def height(self):
+    def height(self) -> int:
         """Return the current screen height."""
         if self._fullscreen:
             return self._fullscreen_size[1]
@@ -96,7 +96,7 @@ class Screen(object):
         self.reset_screen()
 
     @property
-    def size(self):
+    def size(self) -> (int, int):
         """Return the current screen size."""
         if self._fullscreen:
             return self._fullscreen_size
@@ -109,7 +109,7 @@ class Screen(object):
         self.reset_screen()
 
     @property
-    def fullscreen(self):
+    def fullscreen(self) -> bool:
         """Return the current value of the full screen mode."""
         return self._fullscreen
 
@@ -120,22 +120,22 @@ class Screen(object):
         self.reset_screen()
 
     @property
-    def fullscreen_width(self):
+    def fullscreen_width(self) -> int:
         """Return the current fullscreen width."""
         return self._fullscreen_size[0]
 
     @property
-    def fullscreen_height(self):
+    def fullscreen_height(self) -> int:
         """Return the current fullscreen height."""
         return self._fullscreen_size[1]
 
     @property
-    def fullscreen_size(self):
+    def fullscreen_size(self) -> (int, int):
         """Return the current fullscreen size."""
         return self._fullscreen_size
 
     @property
-    def doublebuf(self):
+    def doublebuf(self) -> bool:
         """Return the current value of the double buf mode."""
         return self._doublebuf
 
@@ -146,7 +146,7 @@ class Screen(object):
         self.reset_screen()
 
     @property
-    def hwsurface(self):
+    def hwsurface(self) -> bool:
         """Return the current value of the hwsurface mode."""
         return self._hwsurface
 
@@ -157,7 +157,7 @@ class Screen(object):
         self.reset_screen()
 
     @property
-    def opengl(self):
+    def opengl(self) -> bool:
         """Return the current value of the opengl mode."""
         return self._opengl
 
@@ -168,7 +168,7 @@ class Screen(object):
         self.reset_title()
 
     @property
-    def resizable(self):
+    def resizable(self) -> bool:
         """Return the current value of the resizable mode."""
         return self._resizable
 
@@ -179,7 +179,7 @@ class Screen(object):
         self.reset_screen()
 
     @property
-    def noframe(self):
+    def noframe(self) -> bool:
         """Return the current value of the noframe mode."""
         return self._noframe
 
@@ -190,7 +190,7 @@ class Screen(object):
         self.reset_screen()
 
     @property
-    def flags(self):
+    def flags(self) -> int:
         """Return the current value of the screen flags."""
         flags = 0
         if self._fullscreen:
@@ -208,7 +208,7 @@ class Screen(object):
         return flags
 
     @property
-    def color(self):
+    def color(self) -> (int, int, int):
         """Return the current screen background color."""
         return self._color
 
@@ -219,7 +219,7 @@ class Screen(object):
         self.reset_color()
 
     @property
-    def title(self):
+    def title(self) -> str:
         """Return the current screen title."""
         return self._title
 
@@ -230,12 +230,12 @@ class Screen(object):
         self.reset_title()
 
     @property
-    def image(self):
+    def image(self) -> pygame.Surface:
         """Return the current screen image."""
         return pygame.display.get_surface()
 
     @property
-    def area(self):
+    def area(self) -> pygame.Rect:
         """Return the current screen area."""
         return pygame.display.get_surface().get_rect()
 
@@ -272,7 +272,7 @@ class Keyboard(object):
                 if pygame.key.name(event.key) != '':
                     self._key_type[pygame.key.name(event.key)] = pg.KEYUP
 
-    def push(self, key: Union[pygame.locals, str], delay: int = 0):
+    def push(self, key: Union[int, str], delay: int = 0) -> bool:
         """Know if a keyboard key is pushed, depends on delay."""
         if key not in self._key_type or key not in self._key_first:
             return None
@@ -314,40 +314,40 @@ class Mouse(object):
                 self._rel = event.rel
 
     @property
-    def xpos(self):
+    def xpos(self) -> int:
         """Return the current x mouse position."""
         return self._pos[0]
 
     @property
-    def ypos(self):
+    def ypos(self) -> int:
         """Return the current y mouse position."""
         return self._pos[1]
 
     @property
-    def pos(self):
+    def pos(self) -> (int, int):
         """Return the current mouse position."""
         return self._pos
 
     @property
-    def xrel(self):
+    def xrel(self) -> int:
         """Return the current relative x mouse position."""
         return self._rel[0]
 
     @property
-    def yrel(self):
+    def yrel(self) -> int:
         """Return the current relative y mouse position."""
         return self._rel[1]
 
     @property
-    def rel(self):
+    def rel(self) -> (int, int):
         """Return the current relative mouse position."""
         return self._rel
 
-    def move(self):
+    def move(self) -> bool:
         """Know if the mouse is moving."""
         return not self._rel == (0, 0)
 
-    def push(self, button: int, delay: int = 0):
+    def push(self, button: int, delay: int = 0) -> bool:
         """Know if a mouse button is pushed, depends on delay."""
         if button not in self._button_type:
             return None
@@ -372,7 +372,7 @@ class Mouse(object):
         """Permanently block the mouse cursor to a screen position."""
         pygame.mouse.set_pos(pos)
 
-    def inside(self, area: pygame.Rect):
+    def inside(self, area: pygame.Rect) -> bool:
         """Know if the mouse cursor is inside an area."""
         pos = self._pos
         top = area.topleft
@@ -444,16 +444,16 @@ class Joystick(object):
                     self._ball_first[event.ball] = True
 
     @property
-    def id(self):
+    def id(self) -> int:
         """Return the current joystick id."""
         return self._id
 
     @property
-    def name(self):
+    def name(self) -> str:
         """Return the current joystick name."""
         return self._name
 
-    def push_button(self, button: int, delay: int = 0):
+    def push_button(self, button: int, delay: int = 0) -> bool:
         """Know if a joystick button is pushed, depends on delay."""
         if button not in self._button_type:
             return None
@@ -468,7 +468,7 @@ class Joystick(object):
             return True
         return False
 
-    def push_axis(self, axis: int, delay: int = 0):
+    def push_axis(self, axis: int, delay: int = 0) -> bool:
         """Know if a joystick axis is pushed, depends on delay."""
         if axis not in self._axis_value:
             return None
@@ -483,11 +483,11 @@ class Joystick(object):
             return True
         return False
 
-    def get_axis(self, axis: int):
+    def get_axis(self, axis: int) -> float:
         """Return the current value of the joystick axis."""
         return self._axis_value[axis] if axis in self._axis_value else None
 
-    def push_hat(self, hat: int, delay: int = 0):
+    def push_hat(self, hat: int, delay: int = 0) -> bool:
         """Know if a joystick hat button is pushed, depends on delay."""
         if hat not in self._hat_value:
             return None
@@ -502,6 +502,6 @@ class Joystick(object):
             return True
         return False
 
-    def get_hat(self, hat: int):
+    def get_hat(self, hat: int) -> (int, int):
         """Return the current value of the joystick hat button."""
         return self._hat_value[hat] if hat in self._hat_value else None
