@@ -272,7 +272,7 @@ class Keyboard(object):
                 if pygame.key.name(event.key) != '':
                     self._key_type[pygame.key.name(event.key)] = pg.KEYUP
 
-    def push(self, key: Union[int, str], delay: int = 0) -> bool:
+    def push(self, key: Union[int, str], delay: float = 0) -> Optional[bool]:
         """Know if a keyboard key is pushed, depends on delay."""
         if key not in self._key_type or key not in self._key_first:
             return None
