@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import pygame
-import pygame.locals as cst
+import pygame.locals as pg
 
 from tools import decorators
 import time
@@ -11,7 +11,7 @@ import time
 class Screen(object):
     """Simulate a screen software."""
 
-    def __init__(self, size=(800, 600), color=(255, 255, 255), title="pygame window", flags=None):
+    def __init__(self, size=(800, 600), color=(255, 255, 255), title="Pygame Window", flags=None):
         """Create the screen for the first time."""
         info = pygame.display.Info()
         self._fullscreen_size = (info.current_w, info.current_h)
@@ -28,6 +28,7 @@ class Screen(object):
         self._noframe = 'NOFRAME' in flags
         self.reset_screen()
         self.running = True
+        self.size = size
 
     def reset_screen(self):
         """Reset some attributes of the screen."""
@@ -48,15 +49,15 @@ class Screen(object):
         if events is None:
             events = []
         for event in events:
-            if event.type == cst.QUIT:
+            if event.type == pg.QUIT:
                 self.running = False
-            elif event.type == cst.ACTIVEEVENT:
+            elif event.type == pg.ACTIVEEVENT:
                 pass
                 # event.gain = [0, 1]
                 # event.state = [?, 1, 2, ?, 6, ?]
-            elif event.type == cst.VIDEOEXPOSE:
+            elif event.type == pg.VIDEOEXPOSE:
                 pygame.display.update()
-            elif event.type == cst.VIDEORESIZE:
+            elif event.type == pg.VIDEORESIZE:
                 if event.size != self.size:
                     self.size = event.size
 
@@ -191,17 +192,17 @@ class Screen(object):
         """Return the current value of the screen flags."""
         flags = 0
         if self._fullscreen:
-            flags += cst.FULLSCREEN
+            flags += pg.FULLSCREEN
         if self._doublebuf:
-            flags += cst.DOUBLEBUF
+            flags += pg.DOUBLEBUF
         if self._hwsurface:
-            flags += cst.HWSURFACE
+            flags += pg.HWSURFACE
         if self._opengl:
-            flags += cst.OPENGL
+            flags += pg.OPENGL
         if self._resizable:
-            flags += cst.RESIZABLE
+            flags += pg.RESIZABLE
         if self._noframe:
-            flags += cst.NOFRAME
+            flags += pg.NOFRAME
         return flags
 
     @property
@@ -253,25 +254,23 @@ class Keyboard(object):
         if events is None:
             events = []
         for event in events:
-            if event.type == cst.KEYDOWN:
-                self._key_type[event.key] = cst.KEYDOWN
+            if event.type == pg.KEYDOWN:
+                self._key_type[event.key] = pg.KEYDOWN
                 self._key_first[event.key] = True
-                print(f':{event.unicode},{pygame.key.name(event.key)}:')
-                print(event.unicode == cst.K_ESCAPE)
                 if event.unicode != '':
-                    self._key_type[event.unicode] = cst.KEYDOWN
+                    self._key_type[event.unicode] = pg.KEYDOWN
                     self._key_first[event.unicode] = True
                     self._unicode[(event.key, event.mod)] = event.unicode
                 if pygame.key.name(event.key) != '':
-                    self._key_type[pygame.key.name(event.key)] = cst.KEYDOWN
+                    self._key_type[pygame.key.name(event.key)] = pg.KEYDOWN
                     self._key_first[pygame.key.name(event.key)] = True
-            elif event.type == cst.KEYUP:
-                self._key_type[event.key] = cst.KEYUP
+            elif event.type == pg.KEYUP:
+                self._key_type[event.key] = pg.KEYUP
                 if (event.key, event.mod) in self._unicode:
                     unicode = self._unicode[(event.key, event.mod)]
-                    self._key_type[unicode] = cst.KEYUP
+                    self._key_type[unicode] = pg.KEYUP
                 if pygame.key.name(event.key) != '':
-                    self._key_type[pygame.key.name(event.key)] = cst.KEYUP
+                    self._key_type[pygame.key.name(event.key)] = pg.KEYUP
 
     def push(self, key, delay=0):
         """Know if a keyboard key is pushed, depends on delay."""
@@ -281,7 +280,7 @@ class Keyboard(object):
             self._key_first[key] = False
             self._key_time[key] = time.time()
             return True
-        elif self._key_type[key] is not cst.KEYDOWN:
+        elif self._key_type[key] is not pg.KEYDOWN:
             return False
         elif time.time() - self._key_time[key] >= delay:
             self._key_time[key] = time.time()
@@ -307,12 +306,12 @@ class Mouse(object):
             events = []
         self._rel = (0, 0)
         for event in events:
-            if event.type == cst.MOUSEBUTTONDOWN:
-                self._button_type[event.button] = cst.MOUSEBUTTONDOWN
+            if event.type == pg.MOUSEBUTTONDOWN:
+                self._button_type[event.button] = pg.MOUSEBUTTONDOWN
                 self._button_first[event.button] = True
-            elif event.type == cst.MOUSEBUTTONUP:
-                self._button_type[event.button] = cst.MOUSEBUTTONUP
-            elif event.type == cst.MOUSEMOTION:
+            elif event.type == pg.MOUSEBUTTONUP:
+                self._button_type[event.button] = pg.MOUSEBUTTONUP
+            elif event.type == pg.MOUSEMOTION:
                 self._pos = event.pos
                 self._rel = event.rel
 
@@ -358,7 +357,7 @@ class Mouse(object):
             self._button_first[button] = False
             self._button_time[button] = time.time()
             return True
-        elif self._button_type[button] is not cst.MOUSEBUTTONDOWN:
+        elif self._button_type[button] is not pg.MOUSEBUTTONDOWN:
             return False
         elif time.time() - self._button_time[button] >= delay:
             self._button_time[button] = time.time()
@@ -426,24 +425,24 @@ class Joystick(object):
         if events is None:
             events = []
         for event in events:
-            if event.type == cst.JOYBUTTONDOWN:
+            if event.type == pg.JOYBUTTONDOWN:
                 if event.joy == self._id:
-                    self._button_type[event.button] = cst.JOYBUTTONDOWN
+                    self._button_type[event.button] = pg.JOYBUTTONDOWN
                     self._button_first[event.button] = True
-            elif event.type == cst.JOYBUTTONUP:
+            elif event.type == pg.JOYBUTTONUP:
                 if event.joy == self._id:
-                    self._button_type[event.button] = cst.JOYBUTTONUP
-            elif event.type == cst.JOYAXISMOTION:
+                    self._button_type[event.button] = pg.JOYBUTTONUP
+            elif event.type == pg.JOYAXISMOTION:
                 if event.joy == self._id:
                     # -1 <= event.value <= 1
                     self._axis_value[event.axis] = event.value
                     self._axis_first[event.axis] = True
-            elif event.type == cst.JOYHATMOTION:
+            elif event.type == pg.JOYHATMOTION:
                 if event.joy == self._id:
                     # (-1, -1) <= event.value <= (1, 1)
                     self._hat_value[event.hat] = event.value
                     self._hat_first[event.hat] = True
-            elif event.type == cst.JOYBALLMOTION:
+            elif event.type == pg.JOYBALLMOTION:
                 if event.joy == self._id:
                     # event.rel = ?
                     self._ball_value[event.ball] = event.rel
@@ -468,7 +467,7 @@ class Joystick(object):
             self._button_first[button] = False
             self._button_time[button] = time.time()
             return True
-        elif self._button_type[button] is not cst.JOYBUTTONDOWN:
+        elif self._button_type[button] is not pg.JOYBUTTONDOWN:
             return False
         elif time.time() - self._button_time[button] >= delay:
             self._button_time[button] = time.time()
@@ -512,23 +511,3 @@ class Joystick(object):
     def get_hat(self, hat):
         """Return the current value of the joystick hat button."""
         return self._hat_value[hat] if hat in self._hat_value else None
-
-# if __name__ == "__main__":
-#     import sys
-#
-#     pygame.init()
-#     clock = pygame.time.Clock()
-#     screen = Screen()
-#     keyboard = Keyboard()
-#     while screen.running:
-#         events = pygame.event.get()
-#         screen.update(events)
-#         keyboard.update(events)
-#         if keyboard.push(cst.K_ESCAPE):
-#             screen.running = False
-#         if keyboard.push('+', 99):
-#             print("+")
-#         pygame.display.update()
-#         clock.tick(120)
-#     pygame.quit()
-#     sys.exit()
