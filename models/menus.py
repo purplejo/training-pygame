@@ -1,8 +1,17 @@
 # coding: utf-8
 
-from typing import Callable, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 
-from tools import sprites
+import pygame
+
+from tools import softwares, sprites
+
+pygame.init()
+
+clock = pygame.time.Clock()
+screen = softwares.Screen()
+keyboard = softwares.Keyboard()
+mouse = softwares.Mouse()
 
 
 class Option(sprites.Text):
@@ -55,3 +64,68 @@ class Option(sprites.Text):
             self.action()
         except TypeError:  # WHEN THE ACTION IS NOT CALLABLE
             print(self.message)
+
+
+class Menu(sprites.Surface):
+    """Manage menus."""
+
+    def __init__(self, pos: (int, int) = (0, 0), size: (int, int) = screen.size,
+                 background_color: (int, int, int) = (255, 255, 255), options: Optional[List[Option]] = None):
+        """Create the menu for the first time."""
+        # CALL SUPER
+        super(Menu, self).__init__(pos=pos, size=size, color=background_color)
+        # MANAGE OPTIONS
+        self.options = options if options is not None else []
+        self.reset_options()
+        self.option = None
+        if len(self.options) > 0:
+            self.option = self.options[0]
+            self.option.onfocus()
+        # LOOP
+        self.running = True
+
+    def reset_options(self):
+        """Manage positions of the menu options."""
+        for (i, option) in enumerate(self.options):
+            option.pos = ((self.width - option.width) / 2, sum([self.options[j].height for j in range(i)]) +
+                          (self.height - sum([option.height for option in self.options])) / 2)
+
+    def focus(self, option: Option):
+        """Focus a new option in the menu."""
+        if option is not None and option is not self.option:
+            self.option.onblur()
+            self.option = option
+            self.option.onfocus()
+
+    def blit_on(self, surface: pygame.Surface):
+        """Blit the menu onto the surface. Overriding method."""
+        super(Menu, self).blit_on(surface)
+        for option in self.options:
+            option.blit_on(surface)
+
+    def loop(self):
+        """Manage events in the menu."""
+        while screen.running and self.running:
+            events = pygame.event.get()
+            screen.update(events)
+            keyboard.update(events)
+            mouse.update(events)
+
+            if self.option is not None:
+                if keyboard.push('up', 0.233):
+                    if self.option.previous_option is not None:
+                        self.focus(self.option.previous_option)
+                if keyboard.push('down', 0.233):
+                    if self.option.next_option is not None:
+                        self.focus(self.option.next_option)
+                if mouse.move() and not mouse.inside(self.option.area):
+                    for option in self.options:
+                        if mouse.inside(option.area):
+                            self.focus(option)
+                            break
+                if keyboard.push('escape', 99) or mouse.push(1, 99) and mouse.inside(self.option.area):
+                    self.option.apply()
+
+            self.blit_on(screen.image)
+            pygame.display.update()
+            clock.tick(20)
