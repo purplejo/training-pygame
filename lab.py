@@ -11,7 +11,7 @@ from models import menus
 
 pygame.init()
 
-clock = pygame.time.Clock()
+clock = softwares.Clock()
 screen = softwares.Screen(title="Lab")
 keyboard = softwares.Keyboard()
 mouse = softwares.Mouse()
