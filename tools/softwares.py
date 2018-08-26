@@ -459,7 +459,7 @@ class Mouse(object):
         """Know if the mouse is moving."""
         return not self._rel == (0, 0)
 
-    def push(self, button: int, delay: int = 0) -> bool:
+    def push(self, button: int, delay: int = 0) -> Optional[bool]:
         """Know if a mouse button is pushed, depends on delay."""
         if button not in self._button_type:
             return None
@@ -565,7 +565,7 @@ class Joystick(object):
         """Return the current joystick name."""
         return self._name
 
-    def push_button(self, button: int, delay: int = 0) -> bool:
+    def push_button(self, button: int, delay: int = 0) -> Optional[bool]:
         """Know if a joystick button is pushed, depends on delay."""
         if button not in self._button_type:
             return None
@@ -580,7 +580,7 @@ class Joystick(object):
             return True
         return False
 
-    def push_axis(self, axis: int, delay: int = 0) -> bool:
+    def push_axis(self, axis: int, delay: int = 0) -> Optional[bool]:
         """Know if a joystick axis is pushed, depends on delay."""
         if axis not in self._axis_value:
             return None
@@ -599,7 +599,7 @@ class Joystick(object):
         """Return the current value of the joystick axis."""
         return self._axis_value[axis] if axis in self._axis_value else None
 
-    def push_hat(self, hat: int, delay: int = 0) -> bool:
+    def push_hat(self, hat: int, delay: int = 0) -> Optional[bool]:
         """Know if a joystick hat button is pushed, depends on delay."""
         if hat not in self._hat_value:
             return None
