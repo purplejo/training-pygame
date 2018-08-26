@@ -179,8 +179,8 @@ class Font(pygame.font.Font):
 class Text(Sprite):
     """Manage texts."""
 
-    def __init__(self, pos: (int, int) = (0, 0), font_filename: Optional[str] = None, font_size: int = 84,
-                 antialias: bool = True,
+    def __init__(self, pos: (int, int) = (0, 0), antialias: bool = True,
+                 font_filename: Optional[str] = None, font_size: int = 84,
                  message: str = "PYGAME", message_color: (int, int, int) = (0, 0, 0),
                  background_color: Optional[Tuple[int, int, int]] = None) -> None:
         """Create the text for the first time."""
