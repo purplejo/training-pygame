@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from typing import Callable, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 import pygame
 
@@ -8,7 +8,7 @@ from tools import softwares, sprites
 
 pygame.init()
 
-clock = pygame.time.Clock()
+clock = softwares.Clock()
 screen = softwares.Screen()
 keyboard = softwares.Keyboard()
 mouse = softwares.Mouse()
@@ -22,8 +22,7 @@ class Option(sprites.Text):
                  message_color_onfocus: (int, int, int) = (255, 0, 0),
                  background_color_onblur: Optional[Tuple[int, int, int]] = None,
                  background_color_onfocus: Optional[Tuple[int, int, int]] = None,
-                 previous_option: Optional['Option'] = None, next_option: Optional['Option'] = None,
-                 action: Optional[Callable[[], None]] = None) -> None:
+                 previous_option: Optional['Option'] = None, next_option: Optional['Option'] = None) -> None:
         """Create the option for the first time."""
         # CALL SUPER
         super(Option, self).__init__(pos=pos, font_filename=font_filename, font_size=font_size, antialias=antialias,
@@ -43,8 +42,6 @@ class Option(sprites.Text):
         if next_option is not None:
             next_option.previous_option = self
         self.next_option = next_option
-        # MANAGE ACTION
-        self.action = action
 
     def onblur(self) -> None:
         """Manage option during 'onblur' events."""
@@ -58,25 +55,19 @@ class Option(sprites.Text):
         self._background_color = self._background_color_onfocus
         self.reset_image()
 
-    def apply(self) -> None:
-        """Apply the option action."""
-        try:
-            self.action()
-        except TypeError:  # WHEN THE ACTION IS NOT CALLABLE
-            print(self.message)
-
 
 class Menu(sprites.Surface):
     """Manage menus."""
 
-    def __init__(self, pos: (int, int) = (0, 0), size: (int, int) = screen.size,
-                 background_color: (int, int, int) = (255, 255, 255), options: Optional[List[Option]] = None) -> None:
+    def __init__(self, options: Optional[List['Option']] = None, pos: (int, int) = (0, 0),
+                 size: (int, int) = screen.size, background_color: (int, int, int) = (255, 255, 255)) -> None:
         """Create the menu for the first time."""
         # CALL SUPER
         super(Menu, self).__init__(pos=pos, size=size, color=background_color)
         # MANAGE OPTIONS
         self.options = options if options is not None else []
         self.reset_options()
+        # MANAGE FOCUSED OPTION
         self.option = None
         if len(self.options) > 0:
             self.option = self.options[0]
@@ -85,8 +76,9 @@ class Menu(sprites.Surface):
         self.running = True
 
     def reset_options(self) -> None:
-        """Manage positions of the menu options."""
+        """Manage some arguments of the menu options."""
         for (i, option) in enumerate(self.options):
+            option.menu = self
             option.pos = ((self.width - option.width) / 2, sum([self.options[j].height for j in range(i)]) +
                           (self.height - sum([option.height for option in self.options])) / 2)
 
@@ -96,6 +88,10 @@ class Menu(sprites.Surface):
             self.option.onblur()
             self.option = option
             self.option.onfocus()
+
+    def apply(self) -> None:
+        """Apply an action depending on the focused option. Need to be overridden."""
+        print(self.option.message)
 
     def blit_on(self, surface: pygame.Surface) -> None:
         """Blit the menu onto the surface. Overriding method."""
@@ -110,7 +106,6 @@ class Menu(sprites.Surface):
             screen.update(events)
             keyboard.update(events)
             mouse.update(events)
-
             if self.option is not None:
                 if keyboard.push('up', 0.233):
                     if self.option.previous_option is not None:
@@ -123,9 +118,10 @@ class Menu(sprites.Surface):
                         if mouse.inside(option.area):
                             self.focus(option)
                             break
-                if keyboard.push('escape', 99) or mouse.push(1, 99) and mouse.inside(self.option.area):
-                    self.option.apply()
-
             self.blit_on(screen.image)
             pygame.display.update()
             clock.tick(20)
+            if self.option is not None:
+                if (any([keyboard.push(key, 99) for key in ['enter', 'return', 'keypad enter']])
+                        or (mouse.push(1, 99) and mouse.inside(self.option.area))):
+                    self.apply()
