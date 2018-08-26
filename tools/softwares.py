@@ -126,7 +126,7 @@ class Screen(object):
     """Simulate a screen software."""
 
     def __init__(self, size: (int, int) = (800, 600), color: (int, int, int) = (255, 255, 255),
-                 title: str = "Pygame Window", flags: Optional[List[str]] = None):
+                 title: str = "Pygame Window", flags: Optional[List[str]] = None) -> None:
         """Create the screen for the first time."""
         info = pygame.display.Info()
         self._fullscreen_size = (info.current_w, info.current_h)
@@ -145,21 +145,21 @@ class Screen(object):
         self.running = True
         self.size = size
 
-    def reset_screen(self):
+    def reset_screen(self) -> None:
         """Reset some attributes of the screen."""
         pygame.display.set_mode(self.size, self.flags)
         self.reset_color()
         self.reset_title()
 
-    def reset_color(self):
+    def reset_color(self) -> None:
         """Reset the background color of the screen."""
         pygame.display.get_surface().fill(self.color)
 
-    def reset_title(self):
+    def reset_title(self) -> None:
         """Reset the title of the screen."""
         pygame.display.set_caption(self.title)
 
-    def update(self, events: List[pygame.event.EventType]):
+    def update(self, events: List[pygame.event.EventType]) -> None:
         """Update some events for the screen."""
         for event in events:
             if event.type == pg.QUIT:
@@ -187,7 +187,7 @@ class Screen(object):
         return self._windowedscreen_size[0]
 
     @width.setter
-    def width(self, value: int):
+    def width(self, value: int) -> None:
         """Modify the screen width."""
         height = self._windowedscreen_size[1]
         self._windowedscreen_size = (value, height)
@@ -201,7 +201,7 @@ class Screen(object):
         return self._windowedscreen_size[1]
 
     @height.setter
-    def height(self, value: int):
+    def height(self, value: int) -> None:
         """Modify the screen height."""
         width = self._windowedscreen_size[0]
         self._windowedscreen_size = (width, value)
@@ -215,7 +215,7 @@ class Screen(object):
         return self._windowedscreen_size
 
     @size.setter
-    def size(self, value: (int, int)):
+    def size(self, value: (int, int)) -> None:
         """Modify the screen size."""
         self._windowedscreen_size = value
         self.reset_screen()
@@ -226,7 +226,7 @@ class Screen(object):
         return self._fullscreen
 
     @fullscreen.setter
-    def fullscreen(self, value: bool):
+    def fullscreen(self, value: bool) -> None:
         """Turn the full screen mode to value."""
         self._fullscreen = value
         self.reset_screen()
@@ -252,7 +252,7 @@ class Screen(object):
         return self._doublebuf
 
     @doublebuf.setter
-    def doublebuf(self, value: bool):
+    def doublebuf(self, value: bool) -> None:
         """Turn the double buf mode to value."""
         self._doublebuf = value
         self.reset_screen()
@@ -263,7 +263,7 @@ class Screen(object):
         return self._hwsurface
 
     @hwsurface.setter
-    def hwsurface(self, value: bool):
+    def hwsurface(self, value: bool) -> None:
         """Turn the hwsurface mode to value."""
         self._hwsurface = value
         self.reset_screen()
@@ -274,7 +274,7 @@ class Screen(object):
         return self._opengl
 
     @opengl.setter
-    def opengl(self, value: bool):
+    def opengl(self, value: bool) -> None:
         """Turn the opengl mode to value."""
         self._opengl = value
         self.reset_title()
@@ -285,7 +285,7 @@ class Screen(object):
         return self._resizable
 
     @resizable.setter
-    def resizable(self, value: bool):
+    def resizable(self, value: bool) -> None:
         """Turn the resizable mode to value."""
         self._resizable = value
         self.reset_screen()
@@ -296,7 +296,7 @@ class Screen(object):
         return self._noframe
 
     @noframe.setter
-    def noframe(self, value: bool):
+    def noframe(self, value: bool) -> None:
         """Turn the noframe mode to value."""
         self._noframe = value
         self.reset_screen()
@@ -325,7 +325,7 @@ class Screen(object):
         return self._color
 
     @color.setter
-    def color(self, value: (int, int, int)):
+    def color(self, value: (int, int, int)) -> None:
         """Modify the screen background color."""
         self._color = value
         self.reset_color()
@@ -336,7 +336,7 @@ class Screen(object):
         return self._title
 
     @title.setter
-    def title(self, value: str):
+    def title(self, value: str) -> None:
         """Modify the screen title."""
         self._title = value
         self.reset_title()
@@ -356,14 +356,14 @@ class Screen(object):
 class Keyboard(object):
     """Simulate a keyboard software."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Create the keyboard for the first time."""
         self._key_type = {}
         self._key_first = {}
         self._key_time = {}
         self._unicode = {}
 
-    def update(self, events: List[pygame.event.EventType]):
+    def update(self, events: List[pygame.event.EventType]) -> None:
         """Update events for the keyboard."""
         for event in events:
             if event.type == pg.KEYDOWN:
@@ -404,7 +404,7 @@ class Keyboard(object):
 class Mouse(object):
     """Simulate a mouse software."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Create the mouse for the first time."""
         self._pos = (0, 0)
         self._rel = (0, 0)
@@ -412,7 +412,7 @@ class Mouse(object):
         self._button_first = {}
         self._button_time = {}
 
-    def update(self, events: List[pygame.event.EventType]):
+    def update(self, events: List[pygame.event.EventType]) -> None:
         """Update events for the mouse."""
         self._rel = (0, 0)
         for event in events:
@@ -475,13 +475,13 @@ class Mouse(object):
         return False
 
     @staticmethod
-    def set_visible(value: bool = True):
-        """Turn the mouse cursor visibility to value."""
+    def set_visible(value: bool = True) -> None:
+        """Turn the mouse cursor visibility to value. Delegating method."""
         pygame.mouse.set_visible(value)
 
     @staticmethod
-    def set_pos(pos: (int, int)):
-        """Permanently block the mouse cursor to a screen position."""
+    def set_pos(pos: (int, int)) -> None:
+        """Permanently block the mouse cursor to a screen position. Delegating method."""
         pygame.mouse.set_pos(pos)
 
     def inside(self, area: pygame.Rect) -> bool:
@@ -498,7 +498,7 @@ class Mouse(object):
 class Joystick(object):
     """Simulate a joystick software."""
 
-    def __init__(self, id_: int = 0):
+    def __init__(self, id_: int = 0) -> None:
         """Create the joystick for the first time."""
         self._id = id_
         self._button_type = {}
@@ -516,7 +516,7 @@ class Joystick(object):
         self._name = "Joystick not detected by pygame."
         self.reset_joystick()
 
-    def reset_joystick(self):
+    def reset_joystick(self) -> None:
         """Reset some attributes of the joystick."""
         # If pygame do not detect the joystick
         if self._id >= pygame.joystick.get_count():
@@ -528,7 +528,7 @@ class Joystick(object):
             joystick.init()
             self._name = joystick.get_name()
 
-    def update(self, events: List[pygame.event.EventType]):
+    def update(self, events: List[pygame.event.EventType]) -> None:
         """Update events for the joystick."""
         for event in events:
             if event.type == pg.JOYBUTTONDOWN:

@@ -23,7 +23,7 @@ class Option(sprites.Text):
                  background_color_onblur: Optional[Tuple[int, int, int]] = None,
                  background_color_onfocus: Optional[Tuple[int, int, int]] = None,
                  previous_option: Optional['Option'] = None, next_option: Optional['Option'] = None,
-                 action: Optional[Callable[[], None]] = None):
+                 action: Optional[Callable[[], None]] = None) -> None:
         """Create the option for the first time."""
         # CALL SUPER
         super(Option, self).__init__(pos=pos, font_filename=font_filename, font_size=font_size, antialias=antialias,
@@ -46,19 +46,19 @@ class Option(sprites.Text):
         # MANAGE ACTION
         self.action = action
 
-    def onblur(self):
+    def onblur(self) -> None:
         """Manage option during 'onblur' events."""
         self._message_color = self._message_color_onblur
         self._background_color = self._background_color_onblur
         self.reset_image()
 
-    def onfocus(self):
+    def onfocus(self) -> None:
         """Manage option during 'onfocus' events."""
         self._message_color = self._message_color_onfocus
         self._background_color = self._background_color_onfocus
         self.reset_image()
 
-    def apply(self):
+    def apply(self) -> None:
         """Apply the option action."""
         try:
             self.action()
@@ -70,7 +70,7 @@ class Menu(sprites.Surface):
     """Manage menus."""
 
     def __init__(self, pos: (int, int) = (0, 0), size: (int, int) = screen.size,
-                 background_color: (int, int, int) = (255, 255, 255), options: Optional[List[Option]] = None):
+                 background_color: (int, int, int) = (255, 255, 255), options: Optional[List[Option]] = None) -> None:
         """Create the menu for the first time."""
         # CALL SUPER
         super(Menu, self).__init__(pos=pos, size=size, color=background_color)
@@ -84,26 +84,26 @@ class Menu(sprites.Surface):
         # LOOP
         self.running = True
 
-    def reset_options(self):
+    def reset_options(self) -> None:
         """Manage positions of the menu options."""
         for (i, option) in enumerate(self.options):
             option.pos = ((self.width - option.width) / 2, sum([self.options[j].height for j in range(i)]) +
                           (self.height - sum([option.height for option in self.options])) / 2)
 
-    def focus(self, option: Option):
+    def focus(self, option: Option) -> None:
         """Focus a new option in the menu."""
         if option is not None and option is not self.option:
             self.option.onblur()
             self.option = option
             self.option.onfocus()
 
-    def blit_on(self, surface: pygame.Surface):
+    def blit_on(self, surface: pygame.Surface) -> None:
         """Blit the menu onto the surface. Overriding method."""
         super(Menu, self).blit_on(surface)
         for option in self.options:
             option.blit_on(surface)
 
-    def loop(self):
+    def loop(self) -> None:
         """Manage events in the menu."""
         while screen.running and self.running:
             events = pygame.event.get()
