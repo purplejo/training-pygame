@@ -10,6 +10,118 @@ from tools import decorators
 
 
 @decorators.singleton(parameters=False)
+class Clock(object):
+    """Manage time in pygame and pygame.time.Clock() using the singleton decorator."""
+
+    def __init__(self) -> None:
+        """Create the clock for the first time."""
+        self._clock = pygame.time.Clock()
+
+    @staticmethod
+    def get_ticks() -> int:
+        """
+        Get the time in milliseconds. Delegating method.
+        ------------------------------------------------
+        Return the number of milliseconds since pygame.init() was called.
+        Before pygame is initialized this will always be 0.
+        """
+        return pygame.time.get_tick()
+
+    @staticmethod
+    def wait(milliseconds: int) -> int:
+        """
+        Pause the program for an amount of time. Delegating method.
+        -----------------------------------------------------------
+        Will pause for a given number of milliseconds.
+        This function sleeps the process to share the processor with other programs.
+        A program that waits for even a few milliseconds will consume very little processor time.
+        It is slightly less accurate than the pygame.time.delay() function.
+        This returns the actual number of milliseconds used.
+        """
+        return pygame.time.wait(milliseconds)
+
+    @staticmethod
+    def delay(milliseconds: int) -> int:
+        """
+        Pause the program for an amount of time. Delegating method.
+        -----------------------------------------------------------
+        Will pause for a given number of milliseconds.
+        This function will use the processor (rather than sleeping).
+        This point makes the delay more accurate than pygame.time.wait().
+        This method returns the actual number of milliseconds used.
+        """
+        return pygame.time.delay(milliseconds)
+
+    @staticmethod
+    def set_timer(eventid: int, milliseconds: int) -> None:
+        """
+        Repeatedly create an event on the event queue. Delegating method.
+        -----------------------------------------------------------------
+        Set an event type to appear on the event queue every given number of milliseconds.
+        The first event will not appear until the amount of time has passed.
+        Every event type can have a separate timer attached to it.
+        It is best to use the value between pygame.USEREVENT and pygame.NUMEVENTS.
+        To disable the timer for an event, set the milliseconds argument to 0.
+        """
+        pygame.time.set_timer(eventid, milliseconds)
+
+    def tick(self, framerate: int = 0) -> int:
+        """
+        Update the clock. Delegating method.
+        ------------------------------------
+        This method should be called once per frame.
+        It will compute how many milliseconds have passed since the previous call.
+        It will delay to keep the game running slower than the optional given framerate argument.
+        This can be used to help limit the runtime speed of a game.
+        By calling tick(40) once per frame, the program will never run at more than 40FPS.
+        Note that this function uses SDL_Delay function which is not accurate on every platform.
+        But this does not use much CPU.
+        Use the tick_busy_loop() method if you want an accurate timer, and don't mind chewing CPU.
+        """
+        return self._clock.tick(framerate)
+
+    def tick_busy_loop(self, framerate: int = 0) -> int:
+        """
+        Update the clock. Delegating method.
+        ------------------------------------
+        This method should be called once per frame.
+        It will compute how many milliseconds have passed since the previous call.
+        It will delay to keep the game running slower than the optional given framerate argument.
+        This can be used to help limit the runtime speed of a game.
+        By calling tick_busy_loop(40) once per frame, the program will never run at more than 40FPS.
+        Note that this function uses pygame.time.delay() which uses lots of CPU in a busy loop.
+        This makes sure that timing is more accurate.
+        Use the tick() method if you want a less accurate timing but less CPU usage.
+        """
+        return self._clock.tick_busy_loop(framerate)
+
+    def get_time(self) -> int:
+        """
+        Time used in the previous tick. Delegating method.
+        --------------------------------------------------
+        Return the number of milliseconds that passed between the previous two calls to the tick() method.
+        """
+        return self._clock.get_time
+
+    def get_rawtime(self) -> int:
+        """
+        Actual time used in the previous tick. Delegating method.
+        ---------------------------------------------------------
+        Similar to the get_time() method, but does not include any time used to limit the framerate.
+        """
+        return self._clock.get_rawtime()
+
+    def get_fps(self) -> float:
+        """
+        Compute the clock framerate. Delegating method.
+        -----------------------------------------------
+        Compute your game's framerate (in frames per second).
+        It is computed by averaging the last ten calls to the tick() method.
+        """
+        return self._clock.get_fps()
+
+
+@decorators.singleton(parameters=False)
 class Screen(object):
     """Simulate a screen software."""
 
